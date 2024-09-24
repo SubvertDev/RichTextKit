@@ -114,11 +114,31 @@ public struct RichTextEditor: ViewRepresentable {
         textView.setup(with: text.wrappedValue, format: format)
         textView.configuration = config
         textView.theme = style
+        textView.textContainer.lineFragmentPadding = 0
+        textView.textContainerInset = .zero
         viewConfiguration(textView)
         return textView
     }
 
     public func updateUIView(_ view: UIViewType, context: Context) {}
+    
+    @available(iOS 16.0, *)
+    public func sizeThatFits(_ proposal: ProposedViewSize, uiView: UIViewType, context: Context) -> CGSize? {
+        guard let proposedWidth = proposal.width, proposedWidth > 0, proposedWidth < .infinity else {
+          return nil
+        }
+
+        // calculate size of UITextView that fits current text:
+        var sizeThatFits = uiView.sizeThatFits(CGSize(
+          width: proposedWidth,
+          height: .greatestFiniteMagnitude
+        ))
+
+        // fill parent horizontally:
+        sizeThatFits.width = proposedWidth
+
+        return sizeThatFits
+    }
 
     #else
 
