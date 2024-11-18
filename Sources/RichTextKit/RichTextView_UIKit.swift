@@ -43,6 +43,13 @@ open class RichTextView: UITextView, RichTextViewComponent {
         self.init()
         self.setup(with: string, format: format)
     }
+    
+    @available(iOS 16.0, *)
+    public convenience init(
+        textKit2Enabled: Bool = true
+    ) {
+        self.init(usingTextLayoutManager: textKit2Enabled)
+    }
 
     // MARK: - Properties
 
