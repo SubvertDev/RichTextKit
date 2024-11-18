@@ -61,16 +61,19 @@ public struct RichTextEditor: ViewRepresentable {
     ///   - text: The rich text to edit.
     ///   - context: The rich text context to use.
     ///   - format: The rich text data format, by default `.archivedData`.
+    ///   - textKit2Enabled: TextKit 2 mode (default: enabled, works only on iOS 16+)
     ///   - viewConfiguration: A platform-specific view configuration, if any.
     public init(
         text: Binding<NSAttributedString>,
         context: RichTextContext,
         format: RichTextDataFormat = .archivedData,
+        textKit2Enabled: Bool = true,
         viewConfiguration: @escaping ViewConfiguration = { _ in }
     ) {
         self.text = text
         self._context = ObservedObject(wrappedValue: context)
         self.format = format
+        self.textKit2Enabled = textKit2Enabled
         self.viewConfiguration = viewConfiguration
     }
 
@@ -81,6 +84,7 @@ public struct RichTextEditor: ViewRepresentable {
 
     private var text: Binding<NSAttributedString>
     private var format: RichTextDataFormat
+    private let textKit2Enabled: Bool
     private var viewConfiguration: ViewConfiguration
 
     @Environment(\.richTextEditorConfig)
@@ -90,7 +94,13 @@ public struct RichTextEditor: ViewRepresentable {
     private var style
 
     #if iOS || os(tvOS) || os(visionOS)
-    public let textView = RichTextView()
+    public var textView: RichTextView {
+        if #available(iOS 16.0, *) {
+            return RichTextView(textKit2Enabled: textKit2Enabled)
+        } else {
+            return RichTextView()
+        }
+    }
     #endif
 
     #if macOS
