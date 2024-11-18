@@ -75,6 +75,12 @@ public struct RichTextEditor: ViewRepresentable {
         self.format = format
         self.textKit2Enabled = textKit2Enabled
         self.viewConfiguration = viewConfiguration
+        
+        if #available(iOS 16, *) {
+            textView = RichTextView(textKit2Enabled: textKit2Enabled)
+        } else {
+            textView = RichTextView()
+        }
     }
 
     public typealias ViewConfiguration = (RichTextViewComponent) -> Void
@@ -94,13 +100,7 @@ public struct RichTextEditor: ViewRepresentable {
     private var style
 
     #if iOS || os(tvOS) || os(visionOS)
-    public var textView: RichTextView {
-        if #available(iOS 16.0, *) {
-            return RichTextView(textKit2Enabled: textKit2Enabled)
-        } else {
-            return RichTextView()
-        }
-    }
+    public let textView: RichTextView
     #endif
 
     #if macOS
