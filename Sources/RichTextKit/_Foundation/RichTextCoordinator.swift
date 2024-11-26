@@ -98,6 +98,12 @@ open class RichTextCoordinator: NSObject {
         syncWithTextView()
         context.isEditingText = false
     }
+    
+    open func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "textViewShouldInteractWithURL"), object: nil, userInfo: ["url": URL])
+        return true
+    }
+    
     #endif
 
     #if canImport(AppKit) && !targetEnvironment(macCatalyst)
